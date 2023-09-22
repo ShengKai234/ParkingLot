@@ -9,21 +9,28 @@ Student number: 1279195
 *
 */
 public class Car {
-   String Type;
-   String Id;
-   String Model;
-   String Colour;
-   String TimeEntry;
+    String Type;
+    String Id;
+    String Model;
+    String Colour;
+    String TimeEntry;
+    int hits;
 
-   public Car(String Type, String Id, String Model,String Colour,String TimeEntry){
-       this.Type = Type;
-       this.Id = Id;
-       this.Model = Model;
-       this.Colour = Colour;
-       this.TimeEntry = TimeEntry;
-   }
+   
+    public Car(String Type, String Id, String Model,String Colour,String TimeEntry){
+        this.Type = Type;
+        this.Id = Id;
+        this.Model = Model;
+        this.Colour = Colour;
+        this.TimeEntry = TimeEntry;
+        this.hits = 0;
+    }
 
-   public String getEntryTime(){
-       return TimeEntry;
-   }
+    public String getEntryTime() {
+        return this.TimeEntry;
+    }
+
+    public int getFree(int hours) {
+        return hours * 4 + this.hits * 20;
+    }
 }

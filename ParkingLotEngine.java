@@ -52,10 +52,11 @@ public class ParkingLotEngine {
                 int length = parkingLot.getLength();
                 int width = parkingLot.getWidth();
                 parkingLot.displayLot(length, width);
-            } else if (input.equals("checkin")){
+            } else if (input.equals("checkin")) {
                 engine.checkin(scanner, parkingLot);
-            }
-            else if (input.equals("exit")){
+            } else if (input.equals("checkout")) {
+                engine.checkout(scanner, parkingLot);
+            } else if (input.equals("exit")){
                 engine.displayExitText();
                 break;
             }
@@ -246,5 +247,99 @@ public class ParkingLotEngine {
         return true;
     }
 
-    private checkout
+    private void checkout(Scanner scanner, ParkingLot parkingLot) {
+        if (parkingLot.totalLots == null || parkingLot.occupiedLots == null) {
+            System.out.print("Invalid command! The parking is empty. Taking you back to main menu.");
+            return;
+        }
+
+        System.out.println("Please enter the vehicle details");
+
+        String vehicleType = "";
+        boolean isCheckOutValid = false;
+        while(!isCheckOutValid) {
+            System.out.print("Vehicle Type: ");
+            vehicleType = scanner.nextLine();
+            if ((vehicleType.toLowerCase().equals("cars") && parkingLot.cars.size() == 0) ||
+                (vehicleType.toLowerCase().equals("bike") && parkingLot.bikes.size() == 0)) {
+                System.out.println("The selected vehicle type is not present in the parking lot.");
+            } else {
+                isCheckOutValid = true;
+            }
+        }
+
+        // key in time
+        String pattern = "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
+        String timeExit = "";
+        boolean isTimeValid = false;
+        while (!isTimeValid) {
+            System.out.print("Time of exit: ");
+            timeExit = scanner.nextLine();
+            Pattern regexPattern = Pattern.compile(pattern);
+            Matcher matcher = regexPattern.matcher(timeExit);
+            if (matcher.matches()) {
+                isTimeValid = true;
+            } else {
+                System.out.println("Incorrect time format, please enter time in HH:mm format again!");
+            }
+        }
+        
+
+        String entryTimeStr = "";
+        int hits = 0;
+        String regnId = "";
+        if (vehicleType.toLowerCase().equals("car")) {
+            Car car = parkingLot.cars.get(0);
+            System.out.println(car.TimeEntry);
+            entryTimeStr = car.TimeEntry;
+            hits = car.hits;
+            regnId = car.Id;
+        } else if (vehicleType.toLowerCase().equals("bike")) {
+            Bike bike = parkingLot.bikes.get(0);
+            entryTimeStr = bike.TimeEntry;
+            hits = bike.hits;
+            regnId = bike.Id;
+        }
+
+        System.out.println("Please verify your details.");
+        // Total number of hours
+        String[] exitTime = timeExit.split(":");
+        String[] entryTime = entryTimeStr.split(":");
+        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
+        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
+        double hours = Math.ceil((double) (exitMin - entryMin) / 60);
+        
+        System.out.println("Total number of hours: " + (int) hours);
+        // Total number of hits
+        System.out.println("Total number of hits: " + Integer.toString(hits));
+        System.out.println("Vehicle Typr: " + vehicleType);
+        System.out.println("Regn Id: " + regnId);
+
+        int totalFee = getFee(vehicleType, (int) hours, hits);
+        System.out.println("Total Parking fee: $" + totalFee);
+
+        // remove
+        System.out.println("Type Y to accept the fee or menu to return to main menu");
+        System.out.print("> ");
+        String answer = scanner.nextLine();
+        if (answer.equals("N")) {
+            while (!answer.equals("Y")) {
+                System.out.print("You cannot checkout your vehicle. Please accept the fee by pressing Y or type menu to return to main menu and park your vehicle.");
+                System.out.print("> ");
+                answer = scanner.nextLine();
+            }
+        }
+        
+        parkingLot.removeVehicle(vehicleType);
+        System.out.print("Thank you for visiting Java Parking Lot. See you next time!");
+    }
+
+    private int getFee(String type, int hours, int hits) {
+        if (type.toLowerCase().equals("car")) {
+            return hours * 4 + hits * 20;
+        } else if (type.toLowerCase().equals("bike")) {
+            return hours * 2 + hits * 10;
+        }
+        return 0;
+    }
 }

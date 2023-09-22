@@ -15,6 +15,7 @@ public class Bike {
     String Model;
     String Colour;
     String TimeEntry;
+    int hits;
 
     public Bike(String Type, String Id, String Model,String Colour,String TimeEntry){
         this.Type = Type;
@@ -22,9 +23,14 @@ public class Bike {
         this.Model = Model;
         this.Colour = Colour;
         this.TimeEntry = TimeEntry;
+        this.hits = 0;
     }
 
     public String getEntryTime(){
         return TimeEntry;
+    }
+
+    public int getFree(int hours) {
+        return hours * 2 + this.hits * 10;
     }
 }

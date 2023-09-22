@@ -44,6 +44,14 @@ public class ParkingLot {
     public int getWidth(){
         return width;
     }
+    public void removeVehicle(String vehicleType) {
+        if (vehicleType.toLowerCase().equals("car")) {
+            cars.remove(0);
+        } else if (vehicleType.toLowerCase().equals("bike")) {
+            bikes.remove(0);
+        }
+        occupiedLots--;
+    }
     public static void displayLot(int length, int width) {
         // calculate total lots amount
         totalLots = (length - 2) * (width - 2) - 1;
