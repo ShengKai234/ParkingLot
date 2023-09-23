@@ -8,29 +8,20 @@ University email: chenhsuanw@student.unimelb.edu.au
 Student number: 1279195
 *
 */
-public class Car {
-    String Type;
-    String Id;
-    String Model;
-    String Colour;
-    String TimeEntry;
-    int hits;
+public class Car extends Vehicle {
 
-   
     public Car(String Type, String Id, String Model,String Colour,String TimeEntry){
-        this.Type = Type;
-        this.Id = Id;
-        this.Model = Model;
-        this.Colour = Colour;
-        this.TimeEntry = TimeEntry;
-        this.hits = 0;
+        super(Type, Id, Model, Colour, TimeEntry);
     }
 
-    public String getEntryTime() {
-        return this.TimeEntry;
-    }
-
-    public int getFree(int hours) {
+    @Override
+    public int getFee(String exitTimeStr) {
+        System.out.println("@@@@@@@");
+        String[] exitTime = exitTimeStr.split(":");
+        String[] entryTime = this.TimeEntry.split(":");
+        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
+        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
+        int hours = (int) Math.ceil((double) (exitMin - entryMin) / 60);
         return hours * 4 + this.hits * 20;
     }
 }

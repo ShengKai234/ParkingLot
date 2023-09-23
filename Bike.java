@@ -8,29 +8,19 @@
  Student number: 1279195
  *
  */
-// import java.util.DateTime;
-public class Bike {
-    String Type;
-    String Id;
-    String Model;
-    String Colour;
-    String TimeEntry;
-    int hits;
+public class Bike extends Vehicle {
 
     public Bike(String Type, String Id, String Model,String Colour,String TimeEntry){
-        this.Type = Type;
-        this.Id = Id;
-        this.Model = Model;
-        this.Colour = Colour;
-        this.TimeEntry = TimeEntry;
-        this.hits = 0;
+        super(Type, Id, Model, Colour, TimeEntry);
     }
 
-    public String getEntryTime(){
-        return TimeEntry;
-    }
-
-    public int getFree(int hours) {
+    @Override
+    public int getFee(String exitTimeStr) {
+        String[] exitTime = exitTimeStr.split(":");
+        String[] entryTime = this.TimeEntry.split(":");
+        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
+        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
+        int hours = (int) Math.ceil((double) (exitMin - entryMin) / 60);
         return hours * 2 + this.hits * 10;
     }
 }

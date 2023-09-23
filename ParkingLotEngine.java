@@ -284,38 +284,28 @@ public class ParkingLotEngine {
             }
         }
         
-
-        String entryTimeStr = "";
-        int hits = 0;
-        String regnId = "";
+        Vehicle vehicle = null;
         if (vehicleType.toLowerCase().equals("car")) {
-            Car car = parkingLot.cars.get(0);
-            System.out.println(car.TimeEntry);
-            entryTimeStr = car.TimeEntry;
-            hits = car.hits;
-            regnId = car.Id;
+            vehicle = parkingLot.cars.get(0);
         } else if (vehicleType.toLowerCase().equals("bike")) {
-            Bike bike = parkingLot.bikes.get(0);
-            entryTimeStr = bike.TimeEntry;
-            hits = bike.hits;
-            regnId = bike.Id;
+            vehicle = parkingLot.bikes.get(0);
         }
 
         System.out.println("Please verify your details.");
         // Total number of hours
-        String[] exitTime = timeExit.split(":");
-        String[] entryTime = entryTimeStr.split(":");
-        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
-        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
-        double hours = Math.ceil((double) (exitMin - entryMin) / 60);
+        // String[] exitTime = timeExit.split(":");
+        // String[] entryTime = entryTimeStr.split(":");
+        // Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
+        // Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
+        // double hours = Math.ceil((double) (exitMin - entryMin) / 60);
         
-        System.out.println("Total number of hours: " + (int) hours);
+        System.out.println("Total number of hours: " + vehicle.getHours(timeExit));
         // Total number of hits
-        System.out.println("Total number of hits: " + Integer.toString(hits));
-        System.out.println("Vehicle Typr: " + vehicleType);
-        System.out.println("Regn Id: " + regnId);
+        System.out.println("Total number of hits: " + vehicle.hits);
+        System.out.println("Vehicle Typr: " + vehicle.Type);
+        System.out.println("Regn Id: " + vehicle.Id);
 
-        int totalFee = getFee(vehicleType, (int) hours, hits);
+        int totalFee = vehicle.getFee(timeExit);
         System.out.println("Total Parking fee: $" + totalFee);
 
         // remove
