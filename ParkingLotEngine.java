@@ -19,15 +19,16 @@ public class ParkingLotEngine {
         // Runs the main game loop.
         engine.startProgram(args);
         engine.displayWelcomeText();
-        Scanner scanner = new Scanner(System.in);
         //TODO: Implementation here
         int emptyLots = 47;
         // System.out.println("Empty Lots: "+"[None]"+" | Occupied: "+"[None]");
         // System.out.println("Please enter a command to continue.");
         // System.out.println("Type 'help' to learn how to get started.");
         // System.out.print("> ");
+        engine.displayMenuText(parkingLot);
+
         while (true) {
-            engine.displayMenuText(parkingLot);
+            Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
             if (input.equals("help")){
                 engine.displayHelpText();
@@ -37,40 +38,32 @@ public class ParkingLotEngine {
                 engine.displayMenuText(parkingLot);
             } else if (input.equals("parkinglot")){
                 parkingLot.displayParkingLotMenu();
+                engine.displayMenuText(parkingLot);
             } else if (input.equals("init")){
                 // TODO should be remove
                 System.out.print("> ");
                 parkingLot.initParkingLot(scanner);
                 System.out.println("");
                 ParkingLot.displayParkingLotMenu();
-                // System.out.println("> Empty Lots: " + parkingLot.totalLots + " | Occupied: 0");
-                // System.out.println("Please enter a command to continue.");
-                // System.out.println("Type 'help' to learn how to get started.");
-
-            } else if (input.equals("view")){
-                // TODO should be remove
-                int length = parkingLot.getLength();
-                int width = parkingLot.getWidth();
-                parkingLot.displayLot(length, width);
             } else if (input.equals("checkin")) {
                 engine.checkin(scanner, parkingLot);
+            } else if (input.equals("park")) {
+                parkingLot.initPark();
+                engine.displayMenuText(parkingLot);
             } else if (input.equals("checkout")) {
                 engine.checkout(scanner, parkingLot);
+                engine.displayMenuText(parkingLot);
             } else if (input.equals("exit")){
                 engine.displayExitText();
                 break;
-            }
-            else if(input.equals("")) {
-                // System.out.println("Type 'commands' to list all the available commands");
-                // System.out.println("Type 'menu' to return to the main menu");
-                // System.out.print("> ");
+            } else if(input.equals("")) {
                 engine.displayMenuText(parkingLot);
             }
             else {
-                System.out.println("Command not found!\n");
+                System.out.println("Command not found!");
                 System.out.println("Type 'commands' to list all the available commands");
                 System.out.println("Type 'menu' to return to the main menu");
-                System.out.println("> ");
+                System.out.print("> ");
             }
         }
 
@@ -123,6 +116,7 @@ public class ParkingLotEngine {
 
         System.out.println("\nType 'commands' to list all the available commands" + 
         "\nType 'menu' to return to the main menu");
+        System.out.println("> ");
     }
     private void displayMenuText(ParkingLot parkingLot){
         System.out.println();
@@ -319,8 +313,7 @@ public class ParkingLotEngine {
                 answer = scanner.nextLine();
             }
         }
-        
-        parkingLot.removeVehicle(vehicleType);
+        parkingLot.removeVehicle(vehicle);
         System.out.print("Thank you for visiting Java Parking Lot. See you next time!");
     }
 

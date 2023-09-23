@@ -5,6 +5,8 @@ public class Vehicle {
     String Colour;
     String TimeEntry;
     int hits;
+    int x;
+    int y;
 
     public Vehicle(String Type, String Id, String Model,String Colour,String TimeEntry) {
         this.Type = Type;
@@ -13,6 +15,8 @@ public class Vehicle {
         this.Colour = Colour;
         this.TimeEntry = TimeEntry;
         this.hits = 0;
+        this.x = 1;
+        this.y = 0;
     }
 
     public int getHours(String exitTimeStr) {
