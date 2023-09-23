@@ -16,7 +16,6 @@ public class Car extends Vehicle {
 
     @Override
     public int getFee(String exitTimeStr) {
-        System.out.println("@@@@@@@");
         String[] exitTime = exitTimeStr.split(":");
         String[] entryTime = this.TimeEntry.split(":");
         Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);

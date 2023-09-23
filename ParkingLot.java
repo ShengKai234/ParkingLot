@@ -20,6 +20,7 @@ public class ParkingLot {
     static Integer occupiedLots;
     static List<Car> cars = new ArrayList<>();
     static List<Bike> bikes = new ArrayList<>();
+    static String[][] map;
 
     public static void displayParkingLotMenu() {
         displayParkingLotMenuText();
@@ -53,44 +54,51 @@ public class ParkingLot {
         occupiedLots--;
     }
     public static void displayLot(int length, int width) {
-        // calculate total lots amount
-        totalLots = (length - 2) * (width - 2) - 1;
-        occupiedLots = 0;
-
-        // prints parking lot view
-        System.out.print("|");
-        for(int i =0; i < length - 2; i++) {
-            System.out.print("-");
-        }
-        System.out.println("|");
-
-        for (int i = 1; i < width-1; i++) {
-            if (i< 2) {
-                System.out.print("D");
-            } else {
-                System.out.print("|");
-            }
-    
-            for (int j = 0; j < length-2; j++) {
-                if (j == Math.ceil(length/2)-2 && i == Math.ceil(width/2)-1) {
-                    System.out.print("P");
-                } else {
-                    System.out.print(".");
-                }
-            }
-
-            if (i == width-2){
-                System.out.print("D");
-            } else {
-                System.out.print("|");
+        // diplay
+        for(int i = 0; i < width; i++) {
+            
+            for(int j = 0; j < length; j++) {
+                System.out.print(map[i][j]);
             }
             System.out.println();
         }
-        System.out.print("|");
-        for (int i =0; i < length - 2; i++){
-            System.out.print("-");
-        }
-        System.out.println("|");
+
+        // System.out.println("*****************");
+
+        // // prints parking lot view
+        // System.out.print("|");
+        // for(int i =0; i < length - 2; i++) {
+        //     System.out.print("-");
+        // }
+        // System.out.println("|");
+
+        // for (int i = 1; i < width-1; i++) {
+        //     if (i< 2) {
+        //         System.out.print("D");
+        //     } else {
+        //         System.out.print("|");
+        //     }
+    
+        //     for (int j = 0; j < length-2; j++) {
+        //         if (j == Math.ceil(length/2)-2 && i == Math.ceil(width/2)-1) {
+        //             System.out.print("P");
+        //         } else {
+        //             System.out.print(".");
+        //         }
+        //     }
+
+        //     if (i == width-2){
+        //         System.out.print("D");
+        //     } else {
+        //         System.out.print("|");
+        //     }
+        //     System.out.println();
+        // }
+        // System.out.print("|");
+        // for (int i =0; i < length - 2; i++){
+        //     System.out.print("-");
+        // }
+        // System.out.println("|");
         System.out.println("Press any key to return to parkinglot menu");
         scanner.nextLine();
     }
@@ -121,6 +129,30 @@ public class ParkingLot {
         
         length = newLength;
         width = newWidth;
+
+        // calculate total lots amount
+        totalLots = (length - 2) * (width - 2) - 1;
+        occupiedLots = 0;
+
+        // create map
+        map = new String[width][length];
+        for(int i = 0; i < width; i++) {
+            
+            for(int j = 0; j < length; j++) {
+                if (j == Math.ceil((length - 1)/2) && i == Math.ceil((width - 1)/2)) {
+                    map[i][j] = "P";
+                }else if ((i == 1 && j == 0) || (i == width - 2 && j == length - 1)) {
+                    map[i][j] = "D";
+                } else if (j == 0 || j == length - 1) {
+                    map[i][j] = "|";
+                } else if (i == 0 || i == width - 1) {
+                    // top and button wall
+                    map[i][j] = "-";
+                } else {
+                    map[i][j] = ".";
+                }
+            }
+        }
 
         System.out.println("Parking Lot Space is setup. Here is the layout -");
         displayLot(length, width);
