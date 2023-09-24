@@ -18,6 +18,7 @@ import java.text.ParseException;
 public class ParkingLotEngine {
     
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         ParkingLot parkingLot = new ParkingLot();
         ParkingLotEngine engine = new ParkingLotEngine();
         // Runs the main game loop.
@@ -35,7 +36,6 @@ public class ParkingLotEngine {
         engine.displayMenuText(parkingLot);
 
         while (true) {
-            Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
             if (input.equals("help")){
                 engine.displayHelpText();
