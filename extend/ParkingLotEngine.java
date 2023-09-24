@@ -22,7 +22,15 @@ public class ParkingLotEngine {
         ParkingLotEngine engine = new ParkingLotEngine();
         // Runs the main game loop.
         engine.startProgram(args);
+        if (args.length == 2) {
+            if (Integer.parseInt(args[0]) < 7 || Integer.parseInt(args[1]) < 7) {
+                System.out.println("ParkingLot size cannot be less than 7. Goodbye!");
+                return;
+            }
+            parkingLot.initParkingLot(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        }
         engine.displayWelcomeText();
+
         //TODO: Implementation here
         engine.displayMenuText(parkingLot);
 

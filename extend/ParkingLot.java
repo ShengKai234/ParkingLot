@@ -90,16 +90,16 @@ public class ParkingLot {
         System.out.println("Please enter the length of the parking lot.");
         System.out.print("> ");
         int newLength = scanner.nextInt();
-        while(newLength < 5){
-            System.out.println("The length of the parking lot cannot be less than 5. Please re-enter.");
+        while(newLength < 7){
+            System.out.println("The length of the parking lot cannot be less than 7. Please re-enter.");
             System.out.print("> ");
             newLength = scanner.nextInt(); 
         }
         System.out.println("Please enter the width of the parking lot.");
         System.out.print("> ");
         int newWidth = scanner.nextInt();
-        while (newWidth < 5){
-            System.out.println("The width of the parking lot cannot be less than 5. Please re-enter.");
+        while (newWidth < 7){
+            System.out.println("The width of the parking lot cannot be less than 7. Please re-enter.");
             System.out.print("> ");
             newWidth = scanner.nextInt();
         }
@@ -156,6 +156,67 @@ public class ParkingLot {
         displayLot();
         System.out.println("Press any key to return to parkinglot menu");
         scanner.nextLine();
+    }
+
+    public static void initParkingLot(int newWidth, int newLength){
+        // if occupiedLots != 0, return error
+        if (occupiedLots != null && occupiedLots > 0) {
+            System.out.println("init There are vehicles in the Parking Lot, you cannot change the space of the parking lot at the moment.");
+            displayParkingLotMenuText();
+            return;
+        }
+        length = newLength;
+        width = newWidth;
+
+        // calculate total lots amount
+        // for origin version ->
+        // totalLots = (length - 2) * (width - 2) - 1; 
+        // for extend version ->
+        totalLots = (length - 2 - (length-2) /2) * (width - 4) - (length - 2 - (length-2) /2)*2;
+        occupiedLots = 0;
+
+        // create map
+        orginMap = new char[width][length];
+        map = new char[width][length];
+        for(int i = 0; i < width; i++) {
+            
+            for(int j = 0; j < length; j++) {
+                if ((i == 2 || i == width - 3) && (j % 2 == 1 && j != 0 && j != length - 1)) {
+                    // pillar
+                    orginMap[i][j] = 'P';
+                    map[i][j] = 'P';
+                }else if ((i == 1 && j == 0) || (i == width - 2 && j == length - 1)) {
+                    // entry point
+                    orginMap[i][j] = 'D';
+                    map[i][j] = 'D';
+                } else if (j == 0 || j == length - 1) {
+                    // left and right wall
+                    orginMap[i][j] = '|';
+                    map[i][j] = '|';
+                } else if (i == 0 || i == width - 1) {
+                    // top and button wall
+                    orginMap[i][j] = '-';
+                    map[i][j] = '-';
+                } else if (i == 1 || i == width - 2 || (j % 2 == 0 && j != 0 && j != length - 1)) {
+                    orginMap[i][j] = '~';
+                    map[i][j] = '~';
+                } else {
+                    orginMap[i][j] = '.';
+                    map[i][j] = '.';
+                }
+            }
+        }
+
+        // vehicles
+        vehicles.put("car", new ArrayList<>());
+        vehicles.put("bike", new ArrayList<>());
+        vehicles.put("truck", new ArrayList<>());
+        vehicles.put("motorbike", new ArrayList<>());
+
+        // System.out.println("Parking Lot Space is setup. Here is the layout -");
+        // displayLot();
+        // System.out.println("Press any key to return to parkinglot menu");
+        // scanner.nextLine();
     }
 
     public static void displayLot() {
