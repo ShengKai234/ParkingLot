@@ -10,6 +10,8 @@
  *
  */
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.awt.event.KeyEvent;
@@ -20,9 +22,13 @@ public class ParkingLot {
     static int width;
     static Integer totalLots;
     static Integer occupiedLots;
-    static List<Car> cars = new ArrayList<>();
-    static List<Bike> bikes = new ArrayList<>();
+    // static List<Vehicle> cars = new ArrayList<>();
+    // static List<Vehicle> bikes = new ArrayList<>();
+    static Map<String, List<Vehicle>> vehicles = new HashMap<>();
+    static Map<String, String> idTypeMap = new HashMap<>();
+    static char[][] orginMap;
     static char[][] map;
+    static List<Log> parkingFeeLogs = new ArrayList<>();
 
     public static void displayParkingLotMenu() {
         displayParkingLotMenuText();
@@ -51,22 +57,29 @@ public class ParkingLot {
     }
     public Vehicle getVehicle(String vehicleType) {
         if (vehicleType.toLowerCase().equals("car")) {
-            return cars.get(0);
+            return vehicles.get("car").get(0);
         } else if (vehicleType.toLowerCase().equals("bike")) {
-            return bikes.get(0);
+            return vehicles.get("bike").get(0);
         }
         return null;
     }
-    public void removeVehicle(Vehicle vehicle) {
-        map[vehicle.x][vehicle.y] = '.';
+    public void removeVehicle(Vehicle vehicle, String exitTime) {
+        // log
+        Log log = new Log(vehicle.Type, vehicle.Id, vehicle.TimeEntry, exitTime, vehicle.getFee(exitTime));
+        parkingFeeLogs.add(log);
+
+        // map[vehicle.x][vehicle.y] = '.';
+        map[vehicle.x][vehicle.y] = orginMap[vehicle.x][vehicle.y];
         if (vehicle.Type.toLowerCase().equals("car")) {
-            vehicle = cars.get(0);
-            cars.remove(0);
+            vehicle = vehicles.get("car").get(0);
+            vehicles.get("car").remove(0);
         } else if (vehicle.Type.toLowerCase().equals("bike")) {
-            vehicle = bikes.get(0);
-            bikes.remove(0);
+            vehicle = vehicles.get("bike").get(0);
+            vehicles.get("bike").remove(0);
         }
         occupiedLots--;
+
+        
     }
 
     public static void initParkingLot(Scanner scanner){
@@ -104,29 +117,42 @@ public class ParkingLot {
         occupiedLots = 0;
 
         // create map
+        orginMap = new char[width][length];
         map = new char[width][length];
         for(int i = 0; i < width; i++) {
             
             for(int j = 0; j < length; j++) {
                 if ((i == 2 || i == width - 3) && (j % 2 == 1 && j != 0 && j != length - 1)) {
                     // pillar
+                    orginMap[i][j] = 'P';
                     map[i][j] = 'P';
                 }else if ((i == 1 && j == 0) || (i == width - 2 && j == length - 1)) {
                     // entry point
+                    orginMap[i][j] = 'D';
                     map[i][j] = 'D';
                 } else if (j == 0 || j == length - 1) {
                     // left and right wall
+                    orginMap[i][j] = '|';
                     map[i][j] = '|';
                 } else if (i == 0 || i == width - 1) {
                     // top and button wall
+                    orginMap[i][j] = '-';
                     map[i][j] = '-';
                 } else if (i == 1 || i == width - 2 || (j % 2 == 0 && j != 0 && j != length - 1)) {
+                    orginMap[i][j] = '~';
                     map[i][j] = '~';
                 } else {
+                    orginMap[i][j] = '.';
                     map[i][j] = '.';
                 }
             }
         }
+
+        // vehicles
+        vehicles.put("car", new ArrayList<>());
+        vehicles.put("bike", new ArrayList<>());
+        vehicles.put("truck", new ArrayList<>());
+        vehicles.put("motorbike", new ArrayList<>());
 
         System.out.println("Parking Lot Space is setup. Here is the layout -");
         displayLot();
@@ -154,46 +180,51 @@ public class ParkingLot {
 
     public static boolean initPark() {
         System.out.println("To park a vehicle provide the details.");
-        if (cars.size() == 0 && bikes.size() == 0) {
+        if (vehicles.get("car").size() == 0 && vehicles.get("bike").size() == 0) {
             System.out.println("No vehicle checked in the parking lot, taking you back to main menu");
             return false;
         }
 
-        boolean isTypeValid = false;
-        while(!isTypeValid) {
-            System.out.print("> Vehicle Type: ");
-            String vehicleType = scanner.nextLine();
-            if ((vehicleType.toLowerCase().equals("car") && cars.size() == 0) ||
-                (vehicleType.toLowerCase().equals("bike") && bikes.size() == 0)) {
+        boolean isParkValid = false;
+        Vehicle vehicle = null;
+        while(!isParkValid) {
+            System.out.print("Regn Id:  ");
+            String regnId = scanner.nextLine();
+            if (!idTypeMap.containsKey(regnId)) {
                 System.out.println("The vehicle mentioned is not parked in the parking lot.");
             } else {
-                isTypeValid = true;
-                Vehicle vehicle = null;
-                if (vehicleType.toLowerCase().equals("car")) {
-                    vehicle = cars.get(0);
-                } else if (vehicleType.toLowerCase().equals("bike")) {
-                    vehicle = bikes.get(0);
+                String type = idTypeMap.get(regnId);
+                List<Vehicle> vehiclelist = vehicles.get(type);
+                for (Vehicle v: vehiclelist) {
+                    if (v.Id.equals(regnId)) {
+                        vehicle = v;
+                        isParkValid = true;
+                        park(v);
+                    }
                 }
-                if (vehicle.x != 1 && vehicle.y != 0) {
-                    
-                }
-                park(vehicle);
+                if (!isParkValid) System.out.println("The vehicle mentioned is not parked in the parking lot.");
             }
         }
-        return isTypeValid;
+        return isParkValid;
     }
 
     public static void park(Vehicle vehicle) {
         displayLot();
         if (!(vehicle.x == 1 && vehicle.y == 0)) {
-            map[vehicle.x][vehicle.y] = '.';
+            map[vehicle.x][vehicle.y] = orginMap[vehicle.x][vehicle.y];
         }
         while(true) {
+            System.out.println("Type w/s/a/d to move the vehicle to up/down/left/right or else press q to exit.");
             String input = scanner.nextLine();
             if (input.equals("q")) {
-                // exit
-                if (vehicle.x == 1 && vehicle.y == 0) {
+                // stop park
+                if ((vehicle.x == 1 && vehicle.y == 0) || (vehicle.x == width - 2 && vehicle.y == length - 1)) {
+                     // exit entry
                     return;
+                } else if (map[vehicle.x][vehicle.y] != '.') {
+                    System.out.println("You cannot park a " + vehicle.Type + " in the parking lot anywhere except the parking spots near the entry.");
+                    move(vehicle, 0, 0);
+                    continue;
                 } else {
                     map[vehicle.x][vehicle.y] = vehicle.Type.toUpperCase().charAt(0);
                 }
@@ -223,7 +254,7 @@ public class ParkingLot {
     private static void move(Vehicle vehicle, int moveX, int moveY) {
         int nextX = vehicle.x + moveX;
         int nextY = vehicle.y + moveY;
-        if (nextX < 0 || nextX >= width || nextY < 0 || nextY >= length || !(map[nextX][nextY] == '.' || map[nextX][nextY] == '~')) {
+        if (nextX < 0 || nextX >= width || nextY < 0 || nextY >= length || !(map[nextX][nextY] == '.' || map[nextX][nextY] == '~' || map[nextX][nextY] == 'D')) {
             vehicle.hits += 1;
             if (map[nextX][nextY] == 'P') {
                 System.out.println("You have hit the pillar, there will be a damage fee!");
@@ -248,6 +279,58 @@ public class ParkingLot {
                 }
             }
             System.out.println();
+        }
+    }
+
+    public static void displayParkingFeeLog() {
+        System.out.println("============ Here are the Transaction logs for the Java Parking Lot =============");
+        System.out.println("---------------------------------------------------------------------------------");
+        System.out.println("| Vehicle Type | Registration Id | Entry DateTime | Exit DateTime | Parking Fee |");
+        System.out.println("---------------------------------------------------------------------------------");
+        if (parkingFeeLogs.isEmpty()) {
+            System.out.println("No records found!");
+        } else {
+            // 14 space
+            for (Log log: parkingFeeLogs) {
+                System.out.println("| Vehicle Type | Registration Id | Entry DateTime | Exit DateTime | Parking Fee |");
+                
+                // Vehicle Type
+                System.out.print("|");
+                for (int i = 0; i < 14 - log.vehicleType.length(); i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(log.vehicleType);
+
+                // Registration Id
+                System.out.print("|");
+                for (int i = 0; i < 17 - log.registrationId.length(); i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(log.registrationId);
+
+                // Entry DateTime 
+                System.out.print("|");
+                for (int i = 0; i < 16 - log.entryDateTime.length(); i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(log.entryDateTime);
+                
+
+                // Exit DateTime 
+                System.out.print("|");
+                for (int i = 0; i < 15 - log.exitDateTime.length(); i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(log.exitDateTime);
+                
+                // Parking Fee
+                System.out.print("|");
+                for (int i = 0; i < 13 - log.parkingFee.toString().length(); i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(log.parkingFee);
+                System.out.print("|");
+            }
         }
     }
 }

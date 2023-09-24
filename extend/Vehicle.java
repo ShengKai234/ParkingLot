@@ -4,16 +4,21 @@ public class Vehicle {
     String Model;
     String Colour;
     String TimeEntry;
+    String DateEntry;
     int hits;
     int x;
     int y;
+    int parkingFee;
+    int hitFee;
+    int overnightFee;
 
-    public Vehicle(String Type, String Id, String Model,String Colour,String TimeEntry) {
+    public Vehicle(String Type, String Id, String Model, String Colour, String TimeEntry, String DateEntry) {
         this.Type = Type;
         this.Id = Id;
         this.Model = Model;
         this.Colour = Colour;
         this.TimeEntry = TimeEntry;
+        this.DateEntry = DateEntry;
         this.hits = 0;
         this.x = 1;
         this.y = 0;

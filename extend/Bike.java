@@ -10,8 +10,15 @@
  */
 public class Bike extends Vehicle {
 
-    public Bike(String Type, String Id, String Model,String Colour,String TimeEntry){
-        super(Type, Id, Model, Colour, TimeEntry);
+    int parkingFee = 2;
+    int hitFee = 0;
+    int overnightFee = 5;
+
+    public Bike(String Type, String Id, String Model,String Colour,String TimeEntry, String DateEntry){
+        super(Type, Id, Model, Colour, TimeEntry, DateEntry);
+        super.parkingFee = this.parkingFee;
+        super.hitFee = this.hitFee;
+        super.overnightFee = this.overnightFee;
     }
 
     @Override
@@ -21,6 +28,6 @@ public class Bike extends Vehicle {
         Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
         Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
         int hours = (int) Math.ceil((double) (exitMin - entryMin) / 60);
-        return hours * 2 + this.hits * 10;
+        return hours * this.parkingFee + this.hits * this.hitFee;
     }
 }
