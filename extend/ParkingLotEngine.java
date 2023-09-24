@@ -171,7 +171,8 @@ public class ParkingLotEngine {
         while (!isTypeValid) {
             System.out.print("Vehicle Type: ");
             vehicleType = scanner.nextLine();
-            if (vehicleType.toLowerCase().equals("car") || vehicleType.toLowerCase().equals("bike")) {
+            if (vehicleType.toLowerCase().equals("car") || vehicleType.toLowerCase().equals("bike")
+                || vehicleType.toLowerCase().equals("truck") || vehicleType.toLowerCase().equals("motorbike")) {
                 isTypeValid = true;
             } else {
                 System.out.println("Invalid detail, please enter detail again!");
@@ -254,10 +255,13 @@ public class ParkingLotEngine {
         } else if (vehicleType.toLowerCase().equals("bike")){
             vehicle = new Bike(vehicleType, regnId, Model, Colour, time, dateString);
             parkingLot.vehicles.get("bike").add(vehicle);
+        } else if (vehicleType.toLowerCase().equals("truck")){
+            vehicle = new Truck(vehicleType, regnId, Model, Colour, time, dateString);
+            parkingLot.vehicles.get("truck").add(vehicle);
+        } else if (vehicleType.toLowerCase().equals("motorbike")){
+            vehicle = new Motorbike(vehicleType, regnId, Model, Colour, time, dateString);
+            parkingLot.vehicles.get("motorbike").add(vehicle);
         }
-        System.out.println("park fee: " + vehicle.parkingFee);
-        System.out.println("hit fee: " + vehicle.hitFee);
-        System.out.println("overnight fee: " + vehicle.overnightFee);
         parkingLot.idTypeMap.put(regnId, vehicle.Type);
         parkingLot.occupiedLots++;
         displayMenuText(parkingLot);
@@ -290,19 +294,6 @@ public class ParkingLotEngine {
 
         System.out.println("Please enter the vehicle details");
 
-        // String vehicleType = "";
-        // boolean isCheckOutValid = false;
-        // while(!isCheckOutValid) {
-        //     System.out.print("Vehicle Type: ");
-        //     vehicleType = scanner.nextLine();
-        //     if ((vehicleType.toLowerCase().equals("cars") && parkingLot.vehicles.get("car").size() == 0) ||
-        //         (vehicleType.toLowerCase().equals("bike") && parkingLot.vehicles.get("bike").size() == 0)) {
-        //         System.out.println("The selected vehicle type is not present in the parking lot.");
-        //     } else {
-        //         isCheckOutValid = true;
-        //     }
-        // }
-
         Vehicle vehicle = null;
         String regnId = "";
         boolean isCheckOutValid = false;
@@ -329,38 +320,78 @@ public class ParkingLotEngine {
                 if (!isCheckOutValid) System.out.println("The selected vehicle type is not present in the parking lot. Taking you back to main menu");
             }
         }
-        
-        // keyin exit time
-        String pattern = "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
+
+        boolean isExitBiggerThenEnrty = false;
+        String exitDateString = "";
         String exitTime = "";
-        boolean isTimeValid = false;
-        while (!isTimeValid) {
-            System.out.print("Time of exit: ");
-            exitTime = scanner.nextLine();
-            Pattern regexPattern = Pattern.compile(pattern);
-            Matcher matcher = regexPattern.matcher(exitTime);
-            if (matcher.matches()) {
-                isTimeValid = true;
-            } else {
-                System.out.println("Incorrect time format, please enter time in HH:mm format again!");
+        while (!isExitBiggerThenEnrty) {
+            // keyin entry date
+            String datePattern = "^(19\\d\\d|[0-9][0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
+            boolean isDateValid = false;
+            while (!isDateValid) {
+                System.out.print("Date of entry: ");
+                exitDateString = scanner.nextLine();
+                Pattern regexPattern = Pattern.compile(datePattern);
+                Matcher matcher = regexPattern.matcher(exitDateString);
+                if (matcher.matches()) {
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                
+                        Date date = sdf.parse(exitDateString);
+
+                        // check range
+                        Date minDate = sdf.parse("1970-01-01");
+                        Date maxDate = sdf.parse("2099-12-31");
+                        
+                        if (date.compareTo(minDate) >= 0 && date.compareTo(maxDate) <= 0) {
+                            isDateValid = true;
+                        } else {
+                            System.out.println("Incorrect date format, please enter date in yyyy-MM-dd format again between 1970-01-01 and 2099-12-31!");
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Incorrect date format, please enter date in yyyy-MM-dd format again!");
+                }
+            }
+            
+            // keyin exit time
+            String pattern = "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
+            boolean isTimeValid = false;
+            while (!isTimeValid) {
+                System.out.print("Time of exit: ");
+                exitTime = scanner.nextLine();
+                Pattern regexPattern = Pattern.compile(pattern);
+                Matcher matcher = regexPattern.matcher(exitTime);
+                if (matcher.matches()) {
+                    isTimeValid = true;
+                } else {
+                    System.out.println("Incorrect time format, please enter time in HH:mm format again!");
+                }
+            }
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+                Date entryDate = sdf.parse(vehicle.DateEntry + " " + vehicle.TimeEntry);
+                Date exitDate = sdf.parse(exitDateString + " " + exitTime);
+                if (exitDate.compareTo(entryDate) > 0) {
+                    isExitBiggerThenEnrty = true;
+                } else {
+                    System.out.println("Checkout datetime cannot be less than checkin datetime for the vehicle. Please re-enter.");
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
-        
-        // Vehicle vehicle = null;
-        // if (vehicleType.toLowerCase().equals("car")) {
-        //     vehicle = parkingLot.vehicles.get("car").get(0);
-        // } else if (vehicleType.toLowerCase().equals("bike")) {
-        //     vehicle = parkingLot.vehicles.get("bike").get(0);
-        // }
 
         System.out.println("Please verify your details.");
-        System.out.println("Total number of hours: " + vehicle.getHours(exitTime));
+        System.out.println("Total number of hours: " + vehicle.getHours(exitDateString, exitTime));
         // Total number of hits
         System.out.println("Total number of hits: " + vehicle.hits);
         System.out.println("Vehicle Typr: " + vehicle.Type);
         System.out.println("Regn Id: " + vehicle.Id);
 
-        int totalFee = vehicle.getFee(exitTime);
+        int totalFee = vehicle.getFee(exitDateString, exitTime);
         System.out.println("Total Parking fee: $" + totalFee);
 
         // remove
@@ -374,16 +405,16 @@ public class ParkingLotEngine {
                 answer = scanner.nextLine();
             }
         }
-        parkingLot.removeVehicle(vehicle, exitTime);
+        parkingLot.removeVehicle(vehicle, exitDateString, exitTime);
         System.out.print("Thank you for visiting Java Parking Lot. See you next time!");
     }
 
-    private int getFee(String type, int hours, int hits) {
-        if (type.toLowerCase().equals("car")) {
-            return hours * 4 + hits * 20;
-        } else if (type.toLowerCase().equals("bike")) {
-            return hours * 2 + hits * 10;
-        }
-        return 0;
-    }
+    // private int getFee(String type, int hours, int hits) {
+    //     if (type.toLowerCase().equals("car")) {
+    //         return hours * 4 + hits * 20;
+    //     } else if (type.toLowerCase().equals("bike")) {
+    //         return hours * 2 + hits * 10;
+    //     }
+    //     return 0;
+    // }
 }

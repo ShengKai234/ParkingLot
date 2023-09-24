@@ -20,14 +20,4 @@ public class Bike extends Vehicle {
         super.hitFee = this.hitFee;
         super.overnightFee = this.overnightFee;
     }
-
-    @Override
-    public int getFee(String exitTimeStr) {
-        String[] exitTime = exitTimeStr.split(":");
-        String[] entryTime = this.TimeEntry.split(":");
-        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
-        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
-        int hours = (int) Math.ceil((double) (exitMin - entryMin) / 60);
-        return hours * this.parkingFee + this.hits * this.hitFee;
-    }
 }

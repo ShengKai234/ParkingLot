@@ -1,16 +1,24 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.text.ParseException;
 class test {
     public static void main(String[] args) {
         System.out.println("test....");
-        String timeExit = "23:00";
-        String timeEntry = "19:30";
-        String[] exitTime = timeExit.split(":");
-        String[] entryTime = timeEntry.split(":");
-        Integer exitMin = Integer.parseInt(exitTime[0]) * 60 + Integer.parseInt(exitTime[1]);
-        Integer entryMin = Integer.parseInt(entryTime[0]) * 60 + Integer.parseInt(entryTime[1]);
-        System.out.println(exitMin);
-        System.out.println(entryMin);
-        double d = Math.ceil((double) (exitMin - entryMin) / 60);
-        System.out.println((int) d);
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date entryDate = sdf.parse("2020-10-10 19:00");
+            Date exitDate = sdf.parse("2020-10-12 19:01");
+            long millisecondsDiff = exitDate.getTime() - entryDate.getTime();
+            int hoursDiff = (int) Math.ceil(millisecondsDiff / (60 * 60 * 1000));
+            int overnightDays = hoursDiff / 24;
+            int remaindHours = hoursDiff - overnightDays * 24;
+            System.out.println("mmm: " + Math.ceil((double)millisecondsDiff / (60 * 60 * 1000)));
+            System.out.println("hoursDiff: " + hoursDiff);
+            System.out.println("overnightDays: " + overnightDays);
+            System.out.println("remaindHours: " + remaindHours);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
 }

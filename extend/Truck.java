@@ -8,13 +8,13 @@ University email: chenhsuanw@student.unimelb.edu.au
 Student number: 1279195
 *
 */
-public class Car extends Vehicle {
+public class Truck extends Vehicle {
 
-    int parkingFee = 4;
-    int hitFee = 20;
-    int overnightFee = 10;
+    int parkingFee = 10;
+    int hitFee = 50;
+    int overnightFee = 20;
 
-    public Car(String Type, String Id, String Model,String Colour,String TimeEntry, String DateEntry){
+    public Truck(String Type, String Id, String Model,String Colour,String TimeEntry, String DateEntry){
         super(Type, Id, Model, Colour, TimeEntry, DateEntry);
         super.parkingFee = this.parkingFee;
         super.hitFee = this.hitFee;

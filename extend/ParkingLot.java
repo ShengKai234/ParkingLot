@@ -63,9 +63,9 @@ public class ParkingLot {
         }
         return null;
     }
-    public void removeVehicle(Vehicle vehicle, String exitTime) {
+    public void removeVehicle(Vehicle vehicle, String exitDateStr, String exitTimeStr) {
         // log
-        Log log = new Log(vehicle.Type, vehicle.Id, vehicle.TimeEntry, exitTime, vehicle.getFee(exitTime));
+        Log log = new Log(vehicle.Type, vehicle.Id, vehicle.TimeEntry, exitDateStr + " " + exitTimeStr, vehicle.getFee(exitDateStr, exitTimeStr));
         parkingFeeLogs.add(log);
 
         // map[vehicle.x][vehicle.y] = '.';
@@ -77,9 +77,7 @@ public class ParkingLot {
             vehicle = vehicles.get("bike").get(0);
             vehicles.get("bike").remove(0);
         }
-        occupiedLots--;
-
-        
+        occupiedLots--;   
     }
 
     public static void initParkingLot(Scanner scanner){
@@ -180,7 +178,8 @@ public class ParkingLot {
 
     public static boolean initPark() {
         System.out.println("To park a vehicle provide the details.");
-        if (vehicles.get("car").size() == 0 && vehicles.get("bike").size() == 0) {
+        if (vehicles.get("car").size() == 0 && vehicles.get("bike").size() == 0
+            && vehicles.get("truck").size() == 0 && vehicles.get("motorbike").size() == 0) {
             System.out.println("No vehicle checked in the parking lot, taking you back to main menu");
             return false;
         }
@@ -292,7 +291,6 @@ public class ParkingLot {
         } else {
             // 14 space
             for (Log log: parkingFeeLogs) {
-                System.out.println("| Vehicle Type | Registration Id | Entry DateTime | Exit DateTime | Parking Fee |");
                 
                 // Vehicle Type
                 System.out.print("|");
@@ -329,7 +327,7 @@ public class ParkingLot {
                     System.out.print(" ");
                 }
                 System.out.print(log.parkingFee);
-                System.out.print("|");
+                System.out.println("|");
             }
         }
     }
