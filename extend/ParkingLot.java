@@ -17,7 +17,7 @@ import java.util.Scanner;
 import java.awt.event.KeyEvent;
 
 public class ParkingLot {
-    static Scanner scanner = new Scanner(System.in);
+    // static Scanner scanner = new Scanner(System.in);
     static int length;
     static int width;
     static Integer totalLots;
@@ -30,12 +30,15 @@ public class ParkingLot {
     static char[][] map;
     static List<Log> parkingFeeLogs = new ArrayList<>();
 
-    public static void displayParkingLotMenu() {
+    public static void displayParkingLotMenu(Scanner scanner) {
         displayParkingLotMenuText();
         while(true) {
             String input = scanner.nextLine();
             if (input.equals("init")) {
                 initParkingLot(scanner);
+                scanner.nextLine();
+                System.out.print("> menu");
+                return;
             } else if (input.equals("view")) {
                 displayLot();
                 System.out.println("Press any key to return to parkinglot menu");
@@ -104,8 +107,8 @@ public class ParkingLot {
             newWidth = scanner.nextInt();
         }
         
-        length = newLength;
-        width = newWidth;
+        length = newWidth;
+        width = newLength;
 
         // calculate total lots amount
         // for origin version ->
@@ -237,7 +240,7 @@ public class ParkingLot {
         System.out.print("> ");
     }
 
-    public static boolean initPark() {
+    public static boolean initPark(Scanner scanner) {
         System.out.println("To park a vehicle provide the details.");
         if (vehicles.get("car").size() == 0 && vehicles.get("bike").size() == 0
             && vehicles.get("truck").size() == 0 && vehicles.get("motorbike").size() == 0) {
@@ -259,7 +262,7 @@ public class ParkingLot {
                     if (v.Id.equals(regnId)) {
                         vehicle = v;
                         isParkValid = true;
-                        park(v);
+                        park(scanner, v);
                     }
                 }
                 if (!isParkValid) System.out.println("The vehicle mentioned is not parked in the parking lot.");
@@ -268,7 +271,7 @@ public class ParkingLot {
         return isParkValid;
     }
 
-    public static void park(Vehicle vehicle) {
+    public static void park(Scanner scanner, Vehicle vehicle) {
         displayLot();
         if (!(vehicle.x == 1 && vehicle.y == 0)) {
             map[vehicle.x][vehicle.y] = orginMap[vehicle.x][vehicle.y];

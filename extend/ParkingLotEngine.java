@@ -44,18 +44,17 @@ public class ParkingLotEngine {
             } else if (input.equals("menu")){
                 engine.displayMenuText(parkingLot);
             } else if (input.equals("parkinglot")){
-                parkingLot.displayParkingLotMenu();
+                parkingLot.displayParkingLotMenu(scanner);
                 engine.displayMenuText(parkingLot);
             } else if (input.equals("init")){
                 // TODO should be remove
                 System.out.print("> ");
                 parkingLot.initParkingLot(scanner);
-                System.out.println("");
-                ParkingLot.displayParkingLotMenu();
+                ParkingLot.displayParkingLotMenu(scanner);
             } else if (input.equals("checkin")) {
                 engine.checkin(scanner, parkingLot);
             } else if (input.equals("park")) {
-                parkingLot.initPark();
+                parkingLot.initPark(scanner);
                 engine.displayMenuText(parkingLot);
             } else if (input.equals("parkingfeelog")) {
                 parkingLot.displayParkingFeeLog();
